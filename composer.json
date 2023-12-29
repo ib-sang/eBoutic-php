@@ -1,0 +1,33 @@
+{
+    "name": "ib/e-boutic-php",
+    "description": "back end pahp eboutic, gestioned of buy and stock",
+    "autoload": {
+        "psr-4": {
+            "Controllers\\": "src/Controllers",
+            "Tests\\": "tests",
+            "App\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "IB SANGARE",
+            "email": "sibrahima250@gmail.com"
+        }
+    ],
+    "require": {
+        "php-di/php-di": "^7.0",
+        "guzzlehttp/psr7": "^2.6",
+        "cocur/slugify": "^4.5",
+        "intervention/image": "^3.2",
+        "pagerfanta/pagerfanta": "^4.2",
+        "firebase/php-jwt": "^6.10",
+        "mezzio/mezzio-fastroute": "^3.11",
+        "twig/twig": "^3.8",
+        "http-interop/response-sender": "^1.0"
+    },
+    "require-dev": {
+        "robmorgan/phinx": "^0.15.5",
+        "squizlabs/php_codesniffer": "^3.8",
+        "phpunit/phpunit": "^10.5"
+    }
+}
