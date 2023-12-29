@@ -14,7 +14,7 @@ return [
     'database.host'=>'127.0.0.1',
     'database.username'=>'root',
     'database.password'=>'',
-    'database.name'=>'gestotrans',
+    'database.name'=>'eboutic',
     'views.path'=> dirname(__DIR__).'/views',
     'twig.extensions' => [
         \DI\get(RouterTwigExtension::class),
