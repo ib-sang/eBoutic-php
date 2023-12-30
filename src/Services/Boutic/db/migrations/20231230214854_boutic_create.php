@@ -22,6 +22,7 @@ final class BouticCreate extends AbstractMigration
         $table = $this->table('boutics');
         $table->addColumn('name', 'string', ['limit' => 255])
             ->addColumn('description', 'string', ['limit' => 255, 'null' =>true])
+            ->addColumn('type', 'string', ['limit' => 255, 'null' =>true])
             ->addColumn('phone', 'string', ['limit' => 100, 'null' => true])
             ->addColumn('country', 'string', ['limit' => 30, 'null' => true])
             ->addColumn('city', 'string', ['limit' => 30, 'null' => true])
