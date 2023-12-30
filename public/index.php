@@ -1,6 +1,8 @@
 <?php
 
 use App\Services\Auth\AuthModule;
+use App\Services\Enterprise\EnterpriseModule;
+use App\Services\History\HistoryModule;
 use Controllers\Middleware\CoresMiddleware;
 use Controllers\Middleware\MethodMiddleware;
 use Controllers\Middleware\NoFoundMiddleware;
@@ -29,7 +31,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 // ->addModule(HomeModule::class)
 ->addModule(AuthModule::class)
 // ->addModule(AdminModule::class)
-// ->addModule(EnterpriseModule::class)
+->addModule(EnterpriseModule::class)
 // ->addModule(RoleModule::class)
 // ->addModule(AgenceModule::class)
 // ->addModule(BusiesModule::class)
@@ -47,7 +49,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 // ->addModule(CashModule::class)
 // ->addModule(NotifyModule::class)
 // ->addModule(LocationsModule::class)
-// ->addModule(HistoryModule::class)
+->addModule(HistoryModule::class)
 
     ;
 

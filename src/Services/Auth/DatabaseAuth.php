@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Services\Auth\Table\LoginTable;
 use Controllers\Auth;
 use Controllers\Auth\User;
 use Controllers\Session\JwtHandler;
@@ -26,7 +27,7 @@ class DatabaseAuth extends JwtHandler implements Auth
         UserTable $usertable,
         // AgenceTable $agence,
         // GuichetTable $guichet,
-        // LoginTable $loginTable,
+        LoginTable $loginTable,
         SessionInterface $session,
         // EnterpriseTable $enterprise,
         // PersonnelTable $personnel
@@ -37,7 +38,7 @@ class DatabaseAuth extends JwtHandler implements Auth
         // $this->agence = $agence;
         // $this->guichet = $guichet;
         // $this->personnel = $personnel;
-        // $this->loginTable = $loginTable;
+        $this->loginTable = $loginTable;
     }
 
     public function createUser(array $params):?User
@@ -123,7 +124,7 @@ class DatabaseAuth extends JwtHandler implements Auth
                 'created_at' => new DateTime()
             ];
             // table login status 
-            // $this->loginTable->insert($paramsLogin);
+            $this->loginTable->insert($paramsLogin);
             
             $this->session->set('auth.user', $userId);
             return $returnData;
