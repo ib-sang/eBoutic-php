@@ -2,9 +2,9 @@
 
 namespace App\Services\Boutic\Table;
 
-use Controllers\Database\Table;
+use Controllers\Table\FindTable;
 
-class LoginTable extends Table
+class BouticTable extends FindTable
 {
     protected $table='boutics';
     protected $entity = BouticEntity::class;

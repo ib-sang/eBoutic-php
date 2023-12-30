@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Auth\AuthModule;
+use App\Services\Boutic\BouticModule;
 use App\Services\Enterprise\EnterpriseModule;
 use App\Services\History\HistoryModule;
 use Controllers\Middleware\CoresMiddleware;
@@ -50,6 +51,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 // ->addModule(NotifyModule::class)
 // ->addModule(LocationsModule::class)
 ->addModule(HistoryModule::class)
+->addModule(BouticModule::class)
 
     ;
 
