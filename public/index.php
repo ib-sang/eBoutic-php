@@ -7,6 +7,7 @@ use App\Services\Enterprise\EnterpriseModule;
 use App\Services\History\HistoryModule;
 use App\Services\Personnels\PersonnelModule;
 use App\Services\Product\ProductModule;
+use App\Services\Role\RoleModule;
 use Controllers\Middleware\CoresMiddleware;
 use Controllers\Middleware\MethodMiddleware;
 use Controllers\Middleware\NoFoundMiddleware;
@@ -36,7 +37,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 ->addModule(AuthModule::class)
 // ->addModule(AdminModule::class)
 ->addModule(EnterpriseModule::class)
-// ->addModule(RoleModule::class)
+->addModule(RoleModule::class)
 // ->addModule(AgenceModule::class)
 // ->addModule(BusiesModule::class)
 // ->addModule(GuichetModule::class)
