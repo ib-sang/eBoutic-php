@@ -1,22 +1,25 @@
-<?php
+<?php 
 
-namespace App\Services\Personnels\Actions;
+
+namespace App\Services\Product\Actions;
 
 use App\Services\Auth\DatabaseAuth;
-use App\Services\Auth\Table\UserTable;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
-use App\Services\Personnels\Entity\PersonnelEntity;
 use App\Services\Personnels\Table\PersonnelTable;
+use App\Services\Product\Enity\StockEntity;
+use App\Services\Product\Table\StockTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;
 use Controllers\Database\QueryResult;
 use Controllers\Renderer\RendererInterface;
 use Controllers\Validator;
+use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
 
-class PersonnelCrudAction extends CrudAction
+class StockCrudAction extends CrudAction
 {
+
     protected $renderer;
     protected $table;
     protected $router;
@@ -29,7 +32,7 @@ class PersonnelCrudAction extends CrudAction
     protected $auth;
     protected $statusTable;
     protected $enterprise;
-    private $tableUser;
+    protected $personnel;
 
     /**
      * __construct
@@ -42,73 +45,55 @@ class PersonnelCrudAction extends CrudAction
     public function __construct(
         RendererInterface $renderer,
         EnterpriseTable $enterprise,
-        StatusTable $statusTable,
+        PersonnelTable $personnel,
         DatabaseAuth $auth,
-        PersonnelTable $table,
-        UserTable $tableUser
+        StockTable $table,
+        StatusTable $statusTable
     ) {
-        parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $table);
-        $this->tableUser = $tableUser;
-        $this->auth = $auth;
+        parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $personnel);
     }
     
     public function create(ServerRequestInterface $request)
     {
         $items = $this->getNewEntity();
         $params = $this->getParams($request, $items);
+        $table = $this->table->getTable();
+        $user = $this->auth->getUser();
+
+        $statusParams = [
+            "message" => "La liste de données dans la base",
+            "user" => $user,
+            "table" => $table,
+        ];
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
-                // create a user add to personnal
-                $paramsUser = array_filter($params, function ($keys) {
-                    return in_array(
-                        $keys,
-                        [
-                            'firstname',
-                            'lastname',
-                            'phone',
-                            'password',
-                            'username',
-                            'role'
-                        ]
-                    );
-                }, ARRAY_FILTER_USE_KEY);
-
-                $paramsUser['roles'] = json_encode(['role' => ['role_personnel', 'role_users', $paramsUser['role']]]);
-                unset($paramsUser['role']);
-                // var_dump($paramsUser); die();
-                $this->tableUser->insert($paramsUser);
-
-                // create personnal
-                $paramsPerson = array_filter($params, function ($keys) {
-                    return in_array(
-                        $keys,
-                        [
-                            'salaire',
-                            'enterprise_id',
-                            'boutics_id',
-                            'users_add'
-                        ]
-                    );
-                }, ARRAY_FILTER_USE_KEY);
-                // var_dump($paramsPerson); die();
-                $paramsPerson['users_id'] = $this->tableUser->getPdo()->lastInsertId();
-                // $paramsPerson['users_id'] = 5;
-                $this->table->insert($paramsPerson);
-
+                // var_dump($params); die();
+                $this->table->insert($params);
                 $this->response['status'] = 201;
-                $this->response['message'] = 'Personnal Registration Successfull!';
+                $this->response['message'] = 'Agence Registration Successfull!';
                 unset($params['password']);
                 $this->response['data'] = [
                     'message' => $this->response['message'],
                     'enterprises' => $params,
                     'request' => [
-                        'type' => 'GET',
-                        'url' => 'http:localhost:3000/api/v1/reservations'
-                        // 'data' => ['username', 'password']
+                        'type' => 'POST',
+                        'url' => 'http:localhost:3000/api/v1/login',
+                        'data' => ['username', 'password']
                     ]
                 ];
                 
+                $statusParams["data"] = $params;
+                $statusParams["response"] = $this->response;
+
+                $this->statusTable->insert([
+                    "name" =>"created" .$table,
+                    "description" => "un entré de données de la table: ".$table.", a été ajouté appélé par " ,
+                    "status" => json_encode($statusParams),
+                    // "enterprise_id" => $enterprise->id,
+                    "created_at" => new DateTime()
+                ]);
+
                 return $this->renderer->renderapi(
                     $this->response["status"],
                     $this->response['data'],
@@ -120,6 +105,17 @@ class PersonnelCrudAction extends CrudAction
             $this->response['data']['message'] = $this->response['message'];
             $this->response["data"]['errors'] = $this->getErrorValidator($errors);
             
+            $statusParams["data"] = $errors;
+            $statusParams["response"] = $this->response;
+
+            $this->statusTable->insert([
+                "name" =>"errorcreated" .$table,
+                "description" => "Il y'a eu une erreur de validation des champs d'entré de données de la table: ".$table.", faite par ",
+                "status" => json_encode($statusParams),
+                // "enterprise_id" => $enterprise->id,
+                "created_at" => new DateTime()
+            ]);
+
             return $this->renderer->renderapi(
                 $this->response["status"],
                 $this->response['data'],
@@ -132,7 +128,7 @@ class PersonnelCrudAction extends CrudAction
     {
         $tab = [];
         $tabUser = [];
-        $keysUser = ['ttf','firstname', 'lastname', 'email', 'phone', 'username', 'usersId'];
+        $keysUser = ['firstname', 'lastname', 'email', 'phone', 'username', 'usersId'];
         if ($entity instanceof QueryResult) {
             foreach ($entity->getRecords() as $k => $v) {
                 foreach ($v as $key => $value) {
@@ -171,7 +167,7 @@ class PersonnelCrudAction extends CrudAction
 
     protected function getNewEntity()
     {
-        $post = new PersonnelEntity();
+        $post = new StockEntity();
         $post->created_at = new \DateTime();
         return $post;
     }
@@ -190,23 +186,15 @@ class PersonnelCrudAction extends CrudAction
             return in_array(
                 $keys,
                 [
-                    'username',
-                    'password',
-                    'users_add',
-                    'enterprise_id',
-                    'firstname',
-                    'lastname',
-                    'phone',
-                    'boutics_id',
-                    'salaire',
-                    'role'
-                ]
+                    'name',
+                    'city',
+                    'adress',
+                    'users_id',
+                    'enterprises_id',
+                    'country'
+                    ]
             );
         }, ARRAY_FILTER_USE_KEY);
-        if (!array_key_exists('password', $params)) {
-            $params['password'] = "123";
-        }
-        $params['password'] = password_hash($params['password'], PASSWORD_DEFAULT);
         $params['created_at'] = $post->created_at;
         return $params;
     }
@@ -214,26 +202,9 @@ class PersonnelCrudAction extends CrudAction
     protected function getValidator($request): Validator
     {
         $validator = parent::getValidator($request)
-            ->required(
-                'username',
-                'users_add',
-                'enterprise_id',
-                'firstname',
-                'lastname',
-                'phone',
-                'salaire',
-                'role'
-            )
-            ->notEmpty(
-                'username',
-                'users_add',
-                'enterprise_id',
-                'firstname',
-                'lastname',
-                'phone',
-                'salaire',
-                'role'
-            );
+            ->required('name', 'city', 'adress', 'users_id', 'enterprises_id')
+            ->notEmpty('name', 'city', 'adress', 'users_id', 'enterprises_id');
         return $validator;
     }
+    
 }

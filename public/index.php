@@ -5,6 +5,8 @@ use App\Services\Boutic\BouticModule;
 use App\Services\Category\CategoryModule;
 use App\Services\Enterprise\EnterpriseModule;
 use App\Services\History\HistoryModule;
+use App\Services\Personnels\PersonnelModule;
+use App\Services\Product\ProductModule;
 use Controllers\Middleware\CoresMiddleware;
 use Controllers\Middleware\MethodMiddleware;
 use Controllers\Middleware\NoFoundMiddleware;
@@ -44,7 +46,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 // ->addModule(DeplacementModule::class)
 // ->addModule(ReservationModule::class)
 // ->addModule(CollieModule::class)
-// ->addModule(PersonnelModule::class)
+->addModule(PersonnelModule::class)
 // ->addModule(DepenceModule::class)
 // ->addModule(DashModule::class)
 // ->addModule(PostsModule::class)
@@ -54,6 +56,7 @@ $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
 ->addModule(HistoryModule::class)
 ->addModule(BouticModule::class)
 ->addModule(CategoryModule::class)
+->addModule(ProductModule::class)
 
     ;
 
