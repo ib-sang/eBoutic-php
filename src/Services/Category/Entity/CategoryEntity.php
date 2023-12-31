@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Services\Category\Enity;
+namespace App\Services\Category\Entity;
 
 use Controllers\Entity\Entity;
 

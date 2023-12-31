@@ -2,7 +2,7 @@
 
 namespace App\Services\Product\Table;
 
-use App\Services\Product\Enity\ProductEntity;
+use App\Services\Product\Entity\ProductEntity;
 use Controllers\Table\FindTable;
 
 class ProductTable extends FindTable {

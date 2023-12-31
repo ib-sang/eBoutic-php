@@ -3,7 +3,7 @@
 namespace App\Services\Category\Actions;
 
 use App\Services\Auth\DatabaseAuth;
-use App\Services\Category\Enity\CategoryEntity;
+use App\Services\Category\Entity\CategoryEntity;
 use App\Services\Category\Table\CategoryTable;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
@@ -186,11 +186,8 @@ class CategoryCrudAction extends CrudAction
                 $keys,
                 [
                     'name',
-                    'city',
-                    'adress',
                     'users_id',
-                    'enterprises_id',
-                    'country'
+                    'enterprises_id'
                     ]
             );
         }, ARRAY_FILTER_USE_KEY);
@@ -201,8 +198,8 @@ class CategoryCrudAction extends CrudAction
     protected function getValidator($request): Validator
     {
         $validator = parent::getValidator($request)
-            ->required('name', 'city', 'adress', 'users_id', 'enterprises_id')
-            ->notEmpty('name', 'city', 'adress', 'users_id', 'enterprises_id');
+            ->required('name', 'users_id', 'enterprises_id')
+            ->notEmpty('name', 'users_id', 'enterprises_id');
         return $validator;
     }
 }

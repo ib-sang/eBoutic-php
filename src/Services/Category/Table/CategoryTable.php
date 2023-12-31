@@ -2,7 +2,7 @@
 
 namespace App\Services\Category\Table;
 
-use App\Services\Category\Enity\CategoryEntity;
+use App\Services\Category\Entity\CategoryEntity;
 use Controllers\Table\FindTable;
 
 class CategoryTable extends FindTable {

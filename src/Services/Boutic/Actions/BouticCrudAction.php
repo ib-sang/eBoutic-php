@@ -3,7 +3,7 @@
 namespace App\Services\Boutic\Actions;
 
 use App\Services\Auth\DatabaseAuth;
-use App\Services\Boutic\Table\BouticEntity;
+use App\Services\Boutic\Entity\BouticEntity;
 use App\Services\Boutic\Table\BouticTable;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
@@ -190,7 +190,8 @@ class BouticCrudAction extends CrudAction
                     'adress',
                     'users_id',
                     'enterprises_id',
-                    'country'
+                    'country',
+                    "phone"
                     ]
             );
         }, ARRAY_FILTER_USE_KEY);

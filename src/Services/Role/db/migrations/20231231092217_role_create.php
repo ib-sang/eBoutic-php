@@ -24,8 +24,8 @@ final class RoleCreate extends AbstractMigration
             ->addColumn('published', 'boolean', ['default'=>true])
             ->addColumn('created_at', 'datetime')
             ->addColumn('created_up', 'datetime', ['null' => true])
-            ->addColumn('entreprises_id', 'integer', ['null'=>true])
-            ->addForeignKey('entreprises_id', 'enterprises', 'id', ['delete'=>'SET NULL', 'update'=> 'NO_ACTION'])
+            ->addColumn('enterprises_id', 'integer', ['null'=>true])
+            ->addForeignKey('enterprises_id', 'enterprises', 'id', ['delete'=>'SET NULL', 'update'=> 'NO_ACTION'])
             ->addColumn('users_id', 'integer', ['null'=>true])
             ->addForeignKey('users_id', 'users', 'id', ['delete'=>'SET NULL', 'update'=> 'NO_ACTION'])
             ->create();

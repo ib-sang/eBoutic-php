@@ -193,7 +193,7 @@ class PersonnelCrudAction extends CrudAction
                     'username',
                     'password',
                     'users_add',
-                    'enterprise_id',
+                    'enterprises_id',
                     'firstname',
                     'lastname',
                     'phone',
@@ -217,7 +217,7 @@ class PersonnelCrudAction extends CrudAction
             ->required(
                 'username',
                 'users_add',
-                'enterprise_id',
+                'enterprises_id',
                 'firstname',
                 'lastname',
                 'phone',
@@ -227,7 +227,7 @@ class PersonnelCrudAction extends CrudAction
             ->notEmpty(
                 'username',
                 'users_add',
-                'enterprise_id',
+                'enterprises_id',
                 'firstname',
                 'lastname',
                 'phone',

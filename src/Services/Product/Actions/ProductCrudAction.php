@@ -7,7 +7,7 @@ use App\Services\Auth\DatabaseAuth;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
 use App\Services\Personnels\Table\PersonnelTable;
-use App\Services\Product\Enity\ProductEntity;
+use App\Services\Product\Entity\ProductEntity;
 use App\Services\Product\Table\ProductTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;

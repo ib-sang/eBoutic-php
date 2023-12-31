@@ -7,7 +7,7 @@ use App\Services\Auth\DatabaseAuth;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
 use App\Services\Personnels\Table\PersonnelTable;
-use App\Services\Product\Enity\StockEntity;
+use App\Services\Product\Entity\StockEntity;
 use App\Services\Product\Table\StockTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;
@@ -186,13 +186,10 @@ class StockCrudAction extends CrudAction
             return in_array(
                 $keys,
                 [
-                    'name',
-                    'city',
-                    'adress',
+                    'products_id',
                     'users_id',
-                    'enterprises_id',
-                    'country'
-                    ]
+                    'in_stock'
+                ]
             );
         }, ARRAY_FILTER_USE_KEY);
         $params['created_at'] = $post->created_at;
@@ -202,8 +199,8 @@ class StockCrudAction extends CrudAction
     protected function getValidator($request): Validator
     {
         $validator = parent::getValidator($request)
-            ->required('name', 'city', 'adress', 'users_id', 'enterprises_id')
-            ->notEmpty('name', 'city', 'adress', 'users_id', 'enterprises_id');
+            ->required('products_id', 'users_id', 'in_stock')
+            ->notEmpty('products_id', 'users_id', 'in_stock');
         return $validator;
     }
     

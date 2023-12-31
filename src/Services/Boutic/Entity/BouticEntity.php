@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Boutic\Table;
+namespace App\Services\Boutic\Entity;
 
 use Controllers\Entity\Entity;
 

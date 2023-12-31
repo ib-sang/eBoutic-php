@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Services\Product\Enity;
+namespace App\Services\Product\Entity;
 
 use Controllers\Entity\Entity;
 
