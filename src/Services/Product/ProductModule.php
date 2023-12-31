@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Services\Product\Actions\ProductCrudAction;
+use App\Services\Product\Actions\SaleStatusCrudAction;
 use App\Services\Product\Actions\StockCrudAction;
 use Controllers\Module;
 use Controllers\Router;
@@ -22,5 +23,7 @@ class ProductModule extends Module
         
         // admin products
         $router->crud("$prefix/stocks", StockCrudAction::class, "products.stock");
+        // admin sale status 
+        $router->crud("$prefix/statussales", SaleStatusCrudAction::class, "status.sale");
     }
 }
