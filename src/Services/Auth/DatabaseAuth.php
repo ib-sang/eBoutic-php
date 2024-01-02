@@ -7,6 +7,8 @@ use Controllers\Auth;
 use Controllers\Auth\User;
 use Controllers\Session\JwtHandler;
 use App\Services\Auth\Table\UserTable;
+use App\Services\Enterprise\Table\EnterpriseTable;
+use App\Services\Personnels\Table\PersonnelTable;
 use Controllers\Session\SessionInterface;
 use Controllers\Database\NoRecordException;
 use DateTime;
@@ -29,15 +31,15 @@ class DatabaseAuth extends JwtHandler implements Auth
         // GuichetTable $guichet,
         LoginTable $loginTable,
         SessionInterface $session,
-        // EnterpriseTable $enterprise,
-        // PersonnelTable $personnel
+        EnterpriseTable $enterprise,
+        PersonnelTable $personnel
     ) {
-        // $this->enterprise = $enterprise;
+        $this->enterprise = $enterprise;
         $this->usertable = $usertable;
         $this->session = $session;
         // $this->agence = $agence;
         // $this->guichet = $guichet;
-        // $this->personnel = $personnel;
+        $this->personnel = $personnel;
         $this->loginTable = $loginTable;
     }
 
@@ -91,12 +93,12 @@ class DatabaseAuth extends JwtHandler implements Auth
 
             if (array_search('role_users', $roleUser)!==false && !(array_search('role_admin', $roleUser)!==false)) {
                 $personnel = $this->personnel->findBy('users_id', $userId);
-                $enterprise = $this->getEnterprise($userId, $personnel->enterpriseId);
+                $enterprise = $this->getEnterprise($userId, $personnel->enterprisesId);
             }
 
-            if (array_search('role_personnel', $roleUser)!== false) {
-                $agence = $this->getAgence($personnel->agenceId);
-            }
+            // if (array_search('role_personnel', $roleUser)!== false) {
+            //     $agence = $this->getAgence($personnel->agenceId);
+            // }
 
             // var_dump($agence); die();
             if (array_search('role_admin', $roleUser)!==false) {
@@ -171,33 +173,13 @@ class DatabaseAuth extends JwtHandler implements Auth
         }
     }
 
-    private function getGuichet(int $id)
-    {
-        $result = $this->guichet->find($id);
-        if (!$result) {
-            return null;
-        }
-        // var_dump($result); die();
-        return $result;
-    }
-
-    private function getAgence(int $id)
-    {
-        $result = $this->agence->find($id);
-        if (!$result) {
-            return null;
-        }
-        // var_dump($result); die();
-        return $result;
-    }
-
     private function getEnterprise(int $id, ?int $idEn = null)
     {
         $result = [] ;   
         if (!is_null($idEn)) {
             $result = $this->getParmas($this->enterprise->find($idEn));
         } else {
-            $result = $this->getParmas($this->enterprise && $this->enterprise->findBy('users_id', $id));
+            $result = $this->getParmas($this->enterprise->findBy('users_id', $id));
         }
         return $result;
     }
