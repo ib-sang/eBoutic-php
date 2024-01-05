@@ -76,13 +76,12 @@ class SalesCrudAction extends CrudAction
                 // var_dump($params); die();
                 $product_items = $params['product_items'];
                 unset($params['product_items']);
-                // $this->table->insert($params);
+                $this->table->insert($params);
                 $saleId = $this->table->findLatest()->id;
                 $userId = $params['users_id'];
                 $enterpriseId = $params['enterprises_id'];
                 
                 foreach ($product_items as $key => $value) {
-                    // var_dump($value); die();
                     $paramProduct = [
                         "users_id" => $userId,
                         "price_per_unit" => $value['price_per_unit'],
@@ -148,129 +147,6 @@ class SalesCrudAction extends CrudAction
                 $this->response['message']
             );
         }
-    }
-
-    public function edit(ServerRequestInterface $request)
-    {
-        $errors = '';
-        $table = $this->table->getTable();
-        $id = $request->getAttribute('id');
-        $item = $this->getNewEntity();
-        $user = $this->auth->getUser();
-
-        $statusParams = [
-            "message" => "La liste de données dans la base",
-            "user" => $user,
-            "table" => $table,
-        ];
-        // $roleUser = json_decode($user->roles)->role;
-        // $userId = $user->id;
-        // if (array_search('role_users', $roleUser)!==false && !(array_search('role_admin', $roleUser)!==false)) {
-        //     $personnel = $this->personnel->findBy('users_id', $userId);
-        //     $enterprise = $this->getEnterprise($userId, $personnel->enterpriseId);
-        // }
-
-        // if (array_search('role_admin', $roleUser)!==false) {
-        //     $enterprise = $this->getEnterprise($userId);
-        // }
-
-        if ($request->getMethod() === 'POST') {
-            $validator = $this->getValidator($request);
-            if ($validator->isValid()) {
-                $params = $this->getParams($request, $item);
-                $tabItem = $this->table->find($id);
-                $params['in_stock'] += $tabItem->inStock;
-                $this->table->update($id, $params);
-                $this->response['status'] = 201;
-                $this->response['message'] = $table.' Updated Successfull!';
-                $newEntity = $this->table->findLatest();
-                $this->response['data'] = [
-                    'status' => $this->response['status'],
-                    'message' => $this->response['message'],
-                    $table => $newEntity,
-                    'request' => [
-                        'message' => 'ALL_ENTITY',
-                        'type' => 'GET',
-                        'url' => 'http:localhost:3000/api/v1/'.$table
-                    ]
-                ];
-
-                $statusParams["data"] = [
-                    "old" => $this->table->find($id),
-                    "new" => $params
-                ];
-                $statusParams["response"] = $this->response;
-
-                $this->statusTable->insert([
-                    "name" =>"edit" .$table,
-                    "description" => "Il y'a eu un changement d'entré de données de la table: ".$table.", faite par ",
-                    "status" => json_encode($statusParams),
-                    // "enterprise_id" => $enterprise->id,
-                    "created_at" => new DateTime()
-                ]);
-                return $this->renderer->renderapi(
-                    $this->response["status"],
-                    $this->response['data'],
-                    $this->response['message']
-                );
-            }
-            
-            $errors = $validator->getErrors();
-            Hydrator::hydrate($request->getParsedBody(), $item);
-            $this->response['status'] = 404;
-            $this->response['data']['status'] = 404;
-            $this->response['message'] = "all fields dons't valided";
-            $this->response['data']['message'] = $this->response['message'];
-            $this->response["data"]['errors'] = $this->getErrorValidator($errors);
-            $this->response["data"]["request"] = [
-                'message' => 'CREATE_ENTITY',
-                'type' => 'POST',
-                'url' => 'http://localhost:3000/'.$table.'/new',
-                'data' => ['fom data']
-            ];
-
-            $statusParams["data"] = $errors;
-            $statusParams["response"] = $this->response;
-
-            $this->statusTable->insert([
-                "name" =>"erroredit" .$table,
-                "description" => "Il y'a eu une erreur de validation des champs d'entré de données de la table: ".$table.", faite par ",
-                "status" => json_encode($statusParams),
-                // "enterprise_id" => $enterprise->id,
-                "created_at" => new DateTime()
-            ]);
-            
-            return $this->renderer->renderapi(
-                $this->response["status"],
-                $this->response['data'],
-                $this->response['message']
-            );
-        }
-        $this->response['status'] = 500;
-        $this->response['data']['status'] = 500;
-        $this->response['data']['message'] = $this->response['message'];
-        $this->response["data"]["request"] = [
-            'message' => 'CREATE_ENTITY',
-            'type' => 'POST',
-            'url' => 'http://localhost:3000/'.$table.'/new',
-            'data' => ['form data']
-        ];
-
-        $statusParams["response"] = $this->response;
-
-        $this->statusTable->insert([
-            "name" =>"erroredit" .$table,
-            "description" => "Il y'a eu une erreur de la base pour la table: ".$table.", faite par ",
-            "status" => json_encode($statusParams),
-            // "enterprise_id" => $enterprise->id,
-            "created_at" => new DateTime()
-        ]);
-
-        return $this->renderer->renderapi(
-            $this->response["status"],
-            $this->response['data'],
-            $this->response['message']
-        );
     }
 
     protected function getParamForm($entity)
