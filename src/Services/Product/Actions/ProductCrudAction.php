@@ -191,7 +191,8 @@ class ProductCrudAction extends CrudAction
                     'basic_unit',
                     'users_id',
                     'categories_id',
-                    'active_for_sale'
+                    'active_for_sale',
+                    'boutics_id'
                     ]
             );
         }, ARRAY_FILTER_USE_KEY);
@@ -202,8 +203,8 @@ class ProductCrudAction extends CrudAction
     protected function getValidator($request): Validator
     {
         $validator = parent::getValidator($request)
-            ->required('name', 'price_per_unit', 'basic_unit', 'users_id', 'categories_id')
-            ->notEmpty('name', 'price_per_unit', 'basic_unit', 'users_id', 'categories_id');
+            ->required('name', 'price_per_unit', 'basic_unit', 'users_id', 'categories_id', 'boutics_id')
+            ->notEmpty('name', 'price_per_unit', 'basic_unit', 'users_id', 'categories_id', 'boutics_id');
         return $validator;
     }
 
