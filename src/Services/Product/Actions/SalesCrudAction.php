@@ -8,7 +8,8 @@ use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
 use App\Services\Personnels\Table\PersonnelTable;
 use App\Services\Product\Entity\StockEntity;
-use App\Services\Product\Table\StockTable;
+use App\Services\Product\Table\SaleProductTable;
+use App\Services\Product\Table\SaleTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;
 use Controllers\Database\QueryResult;
@@ -17,7 +18,7 @@ use Controllers\Validator;
 use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
 
-class StockCrudAction extends CrudAction
+class SalesCrudAction extends CrudAction
 {
 
     protected $renderer;
@@ -34,6 +35,8 @@ class StockCrudAction extends CrudAction
     protected $enterprise;
     protected $personnel;
 
+    private $tableItem;
+
     /**
      * __construct
      *
@@ -47,9 +50,11 @@ class StockCrudAction extends CrudAction
         EnterpriseTable $enterprise,
         PersonnelTable $personnel,
         DatabaseAuth $auth,
-        StockTable $table,
+        SaleProductTable $tableItem,
+        SaleTable $table,
         StatusTable $statusTable
     ) {
+        $this->tableItem = $tableItem;
         parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $personnel);
     }
     
@@ -69,10 +74,31 @@ class StockCrudAction extends CrudAction
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 // var_dump($params); die();
-                $this->table->insert($params);
+                $product_items = $params['product_items'];
+                unset($params['product_items']);
+                // $this->table->insert($params);
+                $saleId = $this->table->findLatest()->id;
+                $userId = $params['users_id'];
+                $enterpriseId = $params['enterprises_id'];
+                
+                foreach ($product_items as $key => $value) {
+                    // var_dump($value); die();
+                    $paramProduct = [
+                        "users_id" => $userId,
+                        "price_per_unit" => $value['price_per_unit'],
+                        "price" => $value['price'],
+                        "quantity_sold" => $value['quantity'],
+                        "sales_id" => $saleId,
+                        "products_id" => $value['id'],
+                        "enterprises_id" => $enterpriseId
+                    ];
+                    $this->tableItem->insert($paramProduct);
+                }
+                
+                
                 $this->response['status'] = 201;
                 $this->response['message'] = 'Agence Registration Successfull!';
-                unset($params['password']);
+                
                 $this->response['data'] = [
                     'message' => $this->response['message'],
                     'enterprises' => $params,
@@ -309,10 +335,11 @@ class StockCrudAction extends CrudAction
             return in_array(
                 $keys,
                 [
+                    'sale_amount_quatity',
+                    'sale_amount_paid',
                     'enterprises_id',
-                    'products_id',
-                    'users_id',
-                    'in_stock'
+                    'product_items',
+                    'users_id'
                 ]
             );
         }, ARRAY_FILTER_USE_KEY);
@@ -323,8 +350,8 @@ class StockCrudAction extends CrudAction
     protected function getValidator($request): Validator
     {
         $validator = parent::getValidator($request)
-            ->required('products_id', 'users_id', 'in_stock', 'enterprises_id')
-            ->notEmpty('products_id', 'users_id', 'in_stock', 'enterprises_id');
+            ->required('sale_amount_quatity', 'users_id', 'enterprises_id', 'sale_amount_paid')
+            ->notEmpty('sale_amount_quatity', 'users_id', 'enterprises_id', 'sale_amount_paid');
         return $validator;
     }
     

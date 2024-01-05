@@ -63,13 +63,13 @@ class FindTable extends Table
         $alias='u';
         $aliasCircuit = 'c';
         $user = new UserTable($this->getPdo());
-        $circuit = new CircuitTable($this->getPdo());
+        // $circuit = new CircuitTable($this->getPdo());
 
         $aliasJoin = 'r';
 
         $query = $this->makeQuery()
             ->join($user->getTable()." as $alias", "$alias.id = $aliasJoin.customers_id")
-            ->join($circuit->getTable()." as $aliasCircuit", "$aliasCircuit.id = $aliasJoin.circuit_id")
+            // ->join($circuit->getTable()." as $aliasCircuit", "$aliasCircuit.id = $aliasJoin.circuit_id")
             ->where("$alias.id = $aliasJoin.customers_id")
             ->where("$aliasCircuit.id = $aliasJoin.circuit_id")
             ->where("$aliasJoin.$field = $value")
@@ -84,13 +84,13 @@ class FindTable extends Table
         $alias='u';
         $aliasCircuit = 'ci';
         $user = new UserTable($this->getPdo());
-        $circuit = new CircuitTable($this->getPdo());
+        // $circuit = new CircuitTable($this->getPdo());
 
         $aliasJoin = 'c';
 
         $query = $this->makeQuery()
             ->join($user->getTable()." as $alias", "$alias.id = $aliasJoin.recevery_id")
-            ->join($circuit->getTable()." as $aliasCircuit", "$aliasCircuit.id = $aliasJoin.circuit_id")
+            // ->join($circuit->getTable()." as $aliasCircuit", "$aliasCircuit.id = $aliasJoin.circuit_id")
             ->where("$alias.id = $aliasJoin.recevery_id")
             ->where("$aliasCircuit.id = $aliasJoin.circuit_id")
             ->where("$aliasJoin.$field = $value")
@@ -128,7 +128,7 @@ class FindTable extends Table
 
         $aliasCircuit = 'd';
         $alias = lcfirst($this->table)[0];
-        $circuit = new DeplacementTable($this->getPdo());
+        // $circuit = new DeplacementTable($this->getPdo());
 
         $results = $this->makeQuery()
             ->join($circuit->getTable()." as $aliasCircuit", "$aliasCircuit.id = $alias.voyage_id")
