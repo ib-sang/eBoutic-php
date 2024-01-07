@@ -232,11 +232,7 @@ class Table
      * @return bool
      */
     public function update(int $id, array $params): bool
-    {
-        $fieldQuery = $this->buildFieldQuery($params);
-        $params['id'] = $id;
-        
-        $statement = $this->pdo->prepare("UPDATE $this->table SET $fieldQuery WHERE id=:id");
+    {   
         $fieldQuery=$this->buildFieldQuery($params);
         $params['id']=$id;
         $statement=$this->pdo->prepare("UPDATE $this->table SET $fieldQuery WHERE id=:id");

@@ -369,6 +369,8 @@ class CrudAction
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 $params = $this->getParams($request, $item);
+                $params['created_up'] = $params['created_at'];
+                unset($params['created_at']);
                 $this->table->update($id, $params);
                 $this->response['status'] = 201;
                 $this->response['message'] = $table.' Updated Successfull!';

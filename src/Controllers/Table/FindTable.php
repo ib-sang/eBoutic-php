@@ -8,6 +8,7 @@ use Controllers\Database\Table;
 use App\Services\Auth\Table\UserTable;
 use App\Services\Circuits\Table\CircuitTable;
 use App\Services\Deplacements\Table\DeplacementTable;
+use App\Services\Product\Table\ProductTable;
 
 class FindTable extends Table
 {
@@ -35,6 +36,19 @@ class FindTable extends Table
             return $this->makeQuery()
                 ->select("$alias.*")
                 ->order("$alias.id DESC")
+            ;
+        }
+
+        if (array_key_exists('stocks', $this->makeQuery()->from)) {
+            $alias = 's';
+            $tab = new ProductTable($this->getPdo());
+            $aliasTab = "p";
+            $aliasUser = "u";
+            return $this->makeQuery()
+                ->join($tab->getTable()." as $aliasTab", "$aliasTab.id=$aliasJoin.products_id")
+                ->join($user->getTable()." as $aliasUser", "$aliasUser.id=$aliasJoin.users_id")
+                ->select("$aliasJoin.in_stock ,$aliasJoin.created_at, $aliasJoin.id as id, $aliasTab.name as name, $aliasTab.id as products_id, $aliasTab.categories_id as categories_id, $aliasTab.price_per_unit as price_per_unit, $aliasTab.basic_unit as basic_unit, $aliasTable")
+                ->order("$aliasTab.id DESC")
             ;
         }
         return $this->makeQuery()

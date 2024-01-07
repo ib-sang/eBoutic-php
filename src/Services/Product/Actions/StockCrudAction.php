@@ -52,6 +52,75 @@ class StockCrudAction extends CrudAction
     ) {
         parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $personnel);
     }
+
+    public function index(ServerRequestInterface $request)
+    {
+        $user = $this->auth->getUser();
+        $params = $request->getQueryParams();
+        $table = $this->table->getTable();
+
+        if ($this->table->getTable() == 'users') {
+            $items = $this->table->findAllPublicBy('id', '!2')->paginate(70, $params['p'] ?? 1);
+        }
+        $currentPage = $params['p'] ?? 1;
+        $items = $this->table->findAllPublic()->paginate(70, $currentPage);
+        $count = $items->getNbResults();
+        $nbPage = $items->getNbPages();
+        if ($count !== 0) {
+
+            $tab = $this->getParamForm($items->getIterator());
+            $this->response['status'] = 201;
+            $this->response['data']['status'] = 201;
+            $this->response['data']['message'] = 'All '.$table;
+            $this->response['message'] = 'All '.$table;
+            $this->response['data']['currentPage'] = $currentPage;
+            $this->response['data']['nbPage'] = $nbPage;
+            $this->response['data']['count'] = $count;
+            $this->response['data'][$table] = $tab;
+            $this->response['data']['request'] = [
+                'message' => 'CREATED_ENTITY',
+                'type' => 'POST',
+                'url' => 'http://localhost:3000/api/v1/'.$table.'/new',
+                'data' => ['form data']
+            ];
+
+            // $statusParams["data"] = $tab;
+            // $statusParams["response"] = $this->response;
+
+            // $this->statusTable->insert([
+            //     "name" =>"getall" .$table,
+            //     "description" => "Liste de données de la table: ".$table." dans la base, appélé par " .$user->username,
+            //     "status" => json_encode($statusParams),
+            //     "enterprise_id" => $enterprise->id,
+            //     "created_at" => new DateTime()
+            // ]);
+
+            return $this->renderer->renderapi(
+                $this->response['status'],
+                $this->response['data'],
+                $this->response['message']
+            );
+        }
+        $this->response['data'];
+        $this->response['data']['message'] = "No entries fount.";
+        $this->response['data']['status'] = 201;
+        $this->response['message'] = "No entries fount.";
+
+        // $statusParams["response"] = $this->response;
+        // $this->statusTable->insert([
+        //     "name" =>"errorgetall" .$table,
+        //     "description" => "Ils n'y a aucun donnée dans la base",
+        //     "status" => json_encode($statusParams),
+        //     "enterprise_id" => $enterprise->id,
+        //     "created_at" => new DateTime()
+        // ]);
+        
+        return $this->renderer->renderapi(
+            $this->response['status'],
+            $this->response['data'],
+            $this->response['message']
+        );
+    }
     
     public function create(ServerRequestInterface $request)
     {
@@ -137,22 +206,13 @@ class StockCrudAction extends CrudAction
             "user" => $user,
             "table" => $table,
         ];
-        // $roleUser = json_decode($user->roles)->role;
-        // $userId = $user->id;
-        // if (array_search('role_users', $roleUser)!==false && !(array_search('role_admin', $roleUser)!==false)) {
-        //     $personnel = $this->personnel->findBy('users_id', $userId);
-        //     $enterprise = $this->getEnterprise($userId, $personnel->enterpriseId);
-        // }
-
-        // if (array_search('role_admin', $roleUser)!==false) {
-        //     $enterprise = $this->getEnterprise($userId);
-        // }
 
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {
                 $params = $this->getParams($request, $item);
                 $tabItem = $this->table->find($id);
+                // var_dump($tabItem); die();
                 $params['in_stock'] += $tabItem->inStock;
                 $this->table->update($id, $params);
                 $this->response['status'] = 201;
@@ -252,17 +312,22 @@ class StockCrudAction extends CrudAction
         $tab = [];
         $tabUser = [];
         $keysUser = ['firstname', 'lastname', 'email', 'phone', 'username', 'usersId'];
+        $tabProducts = [];
+        $keysProducts = ['', 'price_per_unit', 'basic_unit', 'categories_id', 'name', 'products_id'];
         if ($entity instanceof QueryResult) {
             foreach ($entity->getRecords() as $k => $v) {
                 foreach ($v as $key => $value) {
                     if (!is_null($value)) {
                         if (array_search($key, $keysUser)) {
                             $tabUser[$key] = $value;
+                        } elseif(array_search($key, $keysProducts)){
+                            $tabProducts[$key] = $value;
                         } else {
                             $tab[$key] = $value;
                         }
                     }
                 }
+                $tab["product"] = $tabProducts;
                 $tab["user"] = $tabUser;
                 // $tab[$k] = $tab;
                 $response['data'][$k] = $tab;
@@ -273,17 +338,17 @@ class StockCrudAction extends CrudAction
                     // var_dump(array_search($key, $keysUser)); die();
                     if (array_search($key, $keysUser)) {
                         $tabUser[$key] = $value;
+                    } elseif(array_search($key, $keysProducts)){
+                        $tabProducts[$key] = $value;
                     } else {
                         $tab[$key] = $value;
                     }
                 }
             }
-            $tab;
+            $tab["product"] = $tabProducts;
             $tab["user"] = $tabUser;
             $response['data'] = $tab;
         }
-        
-        
         return empty($tab) ? null : $response;
     }
 
