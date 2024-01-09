@@ -85,9 +85,10 @@ class PersonnelCrudAction extends CrudAction
                         $keys,
                         [
                             'salaire',
-                            'enterprise_id',
+                            'enterprises_id',
                             'boutics_id',
-                            'users_add'
+                            'users_add',
+                            'created_at'
                         ]
                     );
                 }, ARRAY_FILTER_USE_KEY);

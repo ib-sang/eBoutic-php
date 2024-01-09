@@ -175,11 +175,13 @@ class DatabaseAuth extends JwtHandler implements Auth
 
     private function getEnterprise(int $id, ?int $idEn = null)
     {
-        $result = [] ;   
+        $result = [] ;
         if (!is_null($idEn)) {
             $result = $this->getParmas($this->enterprise->find($idEn));
+            var_dump($result); die();
         } else {
             $result = $this->getParmas($this->enterprise->findBy('users_id', $id));
+            
         }
         return $result;
     }

@@ -89,7 +89,8 @@ class SalesCrudAction extends CrudAction
                         "quantity_sold" => $value['quantity'],
                         "sales_id" => $saleId,
                         "products_id" => $value['id'],
-                        "enterprises_id" => $enterpriseId
+                        "enterprises_id" => $enterpriseId,
+                        "created_at" => new DateTime()
                     ];
                     $this->tableItem->insert($paramProduct);
                 }

@@ -93,6 +93,21 @@ class FindTable extends Table
         return $query;
     }
 
+    public function findByUserBouticsAll(string $field, string $value)
+    {
+        $alias='p';
+        $aliasSale = 's';
+        $user = new ProductTable($this->getPdo());
+        // $circuit = new CircuitTable($this->getPdo());
+
+        $query = $this->makeQuery()
+        ->join($user->getTable()." as $alias", "$alias.id=$aliasSale.products_id")
+        ->select("$aliasSale.*, $alias.name as name, $alias.price_per_unit as price_per_unit, $alias.basic_unit as basic_unit")
+        // ->order("$alias.id DESC")
+        ;
+        return $query;
+    }
+
     public function findByCollieBusAll(string $field, string $value)
     {
         $alias='u';
