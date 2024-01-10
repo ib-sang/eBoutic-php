@@ -8,6 +8,7 @@ use Controllers\Database\Table;
 use App\Services\Auth\Table\UserTable;
 use App\Services\Circuits\Table\CircuitTable;
 use App\Services\Deplacements\Table\DeplacementTable;
+use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Product\Table\ProductTable;
 
 class FindTable extends Table
@@ -104,6 +105,26 @@ class FindTable extends Table
         ->join($user->getTable()." as $alias", "$alias.id=$aliasSale.products_id")
         ->select("$aliasSale.*, $alias.name as name, $alias.price_per_unit as price_per_unit, $alias.basic_unit as basic_unit")
         // ->order("$alias.id DESC")
+        ;
+        return $query;
+    }
+
+    public function findByUserSalesAll(string $field, string $value)
+    {
+        $alias='u';
+        $user = new UserTable($this->getPdo());
+        $product = new ProductTable($this->getPdo());
+        $aliasJoin = 's';
+        $aliasProduct ='p';
+
+        $query = $this->makeQuery()
+        ->join($user->getTable()." as $alias", "$alias.id = $aliasJoin.users_id")
+        ->join($product->getTable()." as $aliasProduct", "$aliasProduct.id = $aliasJoin.products_id")
+        ->where("$alias.id = $aliasJoin.users_id")
+        ->where("$aliasProduct.id = $aliasJoin.products_id")
+            ->where("$aliasJoin.$field = $value")
+            ->select("$aliasJoin.*, u.firstname as firstname, 
+                u.lastname as lastname, u.phone as phone, $aliasProduct.basic_unit as basic_unit, $aliasProduct.price_per_unit as price_per_unit, $aliasProduct.name as name")
         ;
         return $query;
     }

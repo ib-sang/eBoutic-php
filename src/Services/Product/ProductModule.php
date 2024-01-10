@@ -4,6 +4,7 @@ namespace App\Services\Product;
 
 use App\Services\Product\Actions\ProductCrudAction;
 use App\Services\Product\Actions\SaleItemListAction;
+use App\Services\Product\Actions\SaleItemListUserAction;
 use App\Services\Product\Actions\SalesCrudAction;
 use App\Services\Product\Actions\SaleStatusCrudAction;
 use App\Services\Product\Actions\StockCrudAction;
@@ -29,7 +30,9 @@ class ProductModule extends Module
         $router->crud("$prefix/sales", SalesCrudAction::class, "products.sales");
         // admin sale status 
         $router->crud("$prefix/statussales", SaleStatusCrudAction::class, "status.sale");
-
+        // list sale item by user 
         $router->get("$prefix/saleitems/{id:\d+}", SaleItemListAction::class, "products.boutics");
+        // list sale item all user 
+        $router->get("$prefix/saleitemsuser/{id:\d+}", SaleItemListUserAction::class, "products.salesenterprise");
     }
 }
