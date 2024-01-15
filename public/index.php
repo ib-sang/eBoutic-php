@@ -8,6 +8,7 @@ use App\Services\History\HistoryModule;
 use App\Services\Personnels\PersonnelModule;
 use App\Services\Product\ProductModule;
 use App\Services\Role\RoleModule;
+use App\Services\Users\UsersModule;
 use Controllers\Middleware\CoresMiddleware;
 use Controllers\Middleware\MethodMiddleware;
 use Controllers\Middleware\NoFoundMiddleware;
@@ -32,21 +33,12 @@ if ($method == "OPTIONS") {
 $data = json_decode(file_get_contents("php://input"), true);
 
 $app=(new \Controllers\App(dirname(__DIR__).'/config/config.php'))
-// ->addModule(UsersModule::class)
+->addModule(UsersModule::class)
 // ->addModule(HomeModule::class)
 ->addModule(AuthModule::class)
 // ->addModule(AdminModule::class)
 ->addModule(EnterpriseModule::class)
 ->addModule(RoleModule::class)
-// ->addModule(AgenceModule::class)
-// ->addModule(BusiesModule::class)
-// ->addModule(GuichetModule::class)
-// ->addModule(CityModule::class)
-// ->addModule(CarteModule::class)
-// ->addModule(CircuitModule::class)
-// ->addModule(DeplacementModule::class)
-// ->addModule(ReservationModule::class)
-// ->addModule(CollieModule::class)
 ->addModule(PersonnelModule::class)
 // ->addModule(DepenceModule::class)
 // ->addModule(DashModule::class)

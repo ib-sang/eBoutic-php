@@ -178,7 +178,6 @@ class DatabaseAuth extends JwtHandler implements Auth
         $result = [] ;
         if (!is_null($idEn)) {
             $result = $this->getParmas($this->enterprise->find($idEn));
-            var_dump($result); die();
         } else {
             $result = $this->getParmas($this->enterprise->findBy('users_id', $id));
             

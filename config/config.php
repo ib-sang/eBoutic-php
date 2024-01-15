@@ -12,9 +12,9 @@ use Psr\Container\ContainerInterface;
 
 return [
     'database.host'=>'127.0.0.1',
-    'database.username'=>'c1915939c_eboutic',
-    'database.password'=>'eboutic@2024',
-    'database.name'=>'c1915939c_eboutic',
+    'database.username'=>'root',
+    'database.password'=>'',
+    'database.name'=>'eboutic',
     'views.path'=> dirname(__DIR__).'/views',
     'twig.extensions' => [
         \DI\get(RouterTwigExtension::class),

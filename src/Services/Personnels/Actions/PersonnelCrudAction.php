@@ -69,12 +69,13 @@ class PersonnelCrudAction extends CrudAction
                             'phone',
                             'password',
                             'username',
-                            'role'
+                            'role',
+                            'created_at'
                         ]
                     );
                 }, ARRAY_FILTER_USE_KEY);
 
-                $paramsUser['roles'] = json_encode(['role' => ['role_personnel', 'role_users', 'role_'.$paramsUser['role']]]);
+                $paramsUser['roles'] = json_encode(['role' => ['role_personnel', 'role_users', $paramsUser['role']]]);
                 unset($paramsUser['role']);
                 // var_dump($paramsUser); die();
                 $this->tableUser->insert($paramsUser);
