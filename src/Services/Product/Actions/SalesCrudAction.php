@@ -10,6 +10,7 @@ use App\Services\Personnels\Table\PersonnelTable;
 use App\Services\Product\Entity\StockEntity;
 use App\Services\Product\Table\SaleProductTable;
 use App\Services\Product\Table\SaleTable;
+use App\Services\Product\Table\StockTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;
 use Controllers\Database\QueryResult;
@@ -36,6 +37,7 @@ class SalesCrudAction extends CrudAction
     protected $personnel;
 
     private $tableItem;
+    private $stockTable;
 
     /**
      * __construct
@@ -52,9 +54,11 @@ class SalesCrudAction extends CrudAction
         DatabaseAuth $auth,
         SaleProductTable $tableItem,
         SaleTable $table,
-        StatusTable $statusTable
+        StatusTable $statusTable,
+        StockTable $stockTable
     ) {
         $this->tableItem = $tableItem;
+        $this->stockTable = $stockTable;
         parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $personnel);
     }
     
@@ -92,6 +96,8 @@ class SalesCrudAction extends CrudAction
                         "enterprises_id" => $enterpriseId,
                         "created_at" => new DateTime()
                     ];
+                    $stock = $this->stockTable->findBy("products_id", $value['id']);
+                    $this->stockTable->update($stock->id, ['in_stock' => (int)$stock->inStock - (int)$value['quantity']]);
                     $this->tableItem->insert($paramProduct);
                 }
                 

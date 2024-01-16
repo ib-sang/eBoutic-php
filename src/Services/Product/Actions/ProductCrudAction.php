@@ -4,11 +4,14 @@
 namespace App\Services\Product\Actions;
 
 use App\Services\Auth\DatabaseAuth;
+use App\Services\Auth\Table\UserTable;
+use App\Services\Boutic\Table\BouticTable;
 use App\Services\Enterprise\Table\EnterpriseTable;
 use App\Services\Enterprise\Table\StatusTable;
 use App\Services\Personnels\Table\PersonnelTable;
 use App\Services\Product\Entity\ProductEntity;
 use App\Services\Product\Table\ProductTable;
+use App\Services\Product\Table\StockTable;
 use Controllers\Action\CrudAction;
 use Controllers\Database\Hydrator;
 use Controllers\Database\QueryResult;
@@ -34,6 +37,9 @@ class ProductCrudAction extends CrudAction
     protected $enterprise;
     protected $personnel;
 
+    private $stockTable;
+    private $bouticTable;
+
     /**
      * __construct
      *
@@ -48,8 +54,12 @@ class ProductCrudAction extends CrudAction
         PersonnelTable $personnel,
         DatabaseAuth $auth,
         ProductTable $table,
-        StatusTable $statusTable
+        StatusTable $statusTable,
+        StockTable $stockTable,
+        BouticTable $bouticTable
     ) {
+        $this->bouticTable = $bouticTable;
+        $this->stockTable = $stockTable;
         parent::__construct($renderer, $auth, $table, $statusTable, $enterprise, $personnel);
     }
     
@@ -70,6 +80,16 @@ class ProductCrudAction extends CrudAction
             if ($validator->isValid()) {
                 // var_dump($params); die();
                 $this->table->insert($params);
+                $boutic = $this->bouticTable->find($params['boutics_id']);
+                $prodID = $this->table->findLatest()->id;
+                $paramsStock = [
+                    'enterprises_id' => $boutic->enterprisesId,
+                    'products_id' => $prodID,
+                    'users_id' => $params['users_id'],
+                    'in_stock' => 0
+                ];
+                $this->stockTable->insert($paramsStock);
+
                 $this->response['status'] = 201;
                 $this->response['message'] = 'Agence Registration Successfull!';
                 unset($params['password']);
